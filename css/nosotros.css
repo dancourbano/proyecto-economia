@@ -1,0 +1,22 @@
+#foto
+{
+	width: 40%;
+	overflow: hidden;
+	border: 10px solid rgb(0,0,0);
+}
+#foto img
+{
+		width: 100%;
+}
+#descripcion
+{
+	width: 30%;
+	font-size: 1.04em;
+	color: rgb(0, 0, 0);
+	padding: 5em 1em;
+}
+#foto , #descripcion
+{
+	display: inline-block;
+	vertical-align:top;
+}

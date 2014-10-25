@@ -1,0 +1,783 @@
+<html>
+<head>
+  <meta charset="utf-8">
+	<title></title>
+<link href='css/foundation.css' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="css/estilo.css">
+	<link href='css/bootstrap.css' rel='stylesheet' type='text/css'>
+  
+	<link href='http://fonts.googleapis.com/css?family=Merienda+One' rel='stylesheet' type='text/css'>
+
+
+<style type="text/css">
+#container{
+  margin: 1em 4em 4em 4em;
+}
+
+
+</style>
+<script type="text/javascript" src="jquery.min.js"></script>
+	<script src="jquery.js"></script>
+        <script type="text/javascript" src="js/highcharts.js"></script>
+        <!-- Este archivo es para darle un estilo (Este archivo es Opcional) -->
+        <script type="text/javascript" src="js/themes/grid.js"></script>
+        <!-- Este archivo es para poder exportar los datos que obtengamos -->
+        <script type="text/javascript" src="js/modules/exporting.js"></script>
+
+<script>
+
+
+$(document).ready(function(){
+//funcion principal a la que se debe agregar
+  var ab=0;
+   $("#add").click(function() {
+
+           /* Opción 1 */
+       var Q = $("#Q").val();
+       var L = $("#L").val();
+       var C = $("#Costof").val();
+       var Cv = $("#Costov").val();
+       var Pr = $("#precio").val();
+
+
+       var n = $('tr:last td', $("#mitabla")).length;
+
+       var tds = '<tr>';
+       for(var i = 0; i < n; i++){
+
+           if(i == 0)   tds += "<td ><input class='input-mini' id='celda"+ab+"' type='text' value='"+Q+"'>"+"</td>";
+           else
+           if(i == 1)   tds += "<td ><input class='input-mini' id='celda"+ab+"' type='text' value='"+L+"'>"+"</td>";
+           else
+           if(i == 2)   tds += "<td ><input class='input-mini' id='celda"+ab+"' type='text' value='"+C+"'>"+"</td>";
+           else
+           if(i == 3)   tds += "<td ><input class='input-mini' id='celda"+ab+"' type='text' value='"+Cv+"'>"+"</td>";
+           else
+           if(i == 12)  tds += "<td ><input class='input-mini' id='celda"+ab+"' type='text' value='"+Pr+"'>"+"</td>";
+
+           else     tds += "<td ><input class='input-mini' id='celda"+ab+"' type='text'>"+"</td>";
+
+                      ab++;
+      }
+
+       tds += '</tr>';
+       
+       $("#mitabla").append(tds);          
+  });
+   $("#LlenarT").click(function() {
+
+        var tds = '<tr>';
+
+        var filas = $('tbody:last tr', $("#mitabla")).length;
+         for(var j=0;j<filas-1;j++){
+           var CT = parseFloat($("input#celda"+((j*14)+2)).val()) + parseFloat($("input#celda"+((j*14)+3)).val());
+
+           var CFP = parseFloat($("input#celda"+((j*14)+2)).val())/parseFloat($("input#celda"+((j*14))).val());  
+           var CVP = parseFloat($("input#celda"+((j*14)+3)).val())/parseFloat($("input#celda"+((j*14))).val());  
+                $("input#celda"+((j*14)+4)).val(CT.toFixed(2));
+                $("input#celda"+((j*14)+8)).val(CFP.toFixed(2));
+                $("input#celda"+((j*14)+9)).val(CVP.toFixed(2));
+
+           var CPro = parseFloat($("input#celda"+((j*14)+4)).val())/parseFloat($("input#celda"+((j*14))).val());  
+                $("input#celda"+((j*14)+10)).val(CPro.toFixed(2));
+
+           var PT = parseFloat($("input#celda"+(j*14)).val()) / parseFloat($("input#celda"+((j*14)+1)).val());
+                $("input#celda"+((j*14)+5)).val(PT.toFixed(2));
+
+           var PP = parseFloat($("input#celda"+((j*14)+5)).val())/parseFloat($("input#celda"+((j*14)+1)).val());
+                $("input#celda"+((j*14)+6)).val(PP.toFixed(2));
+
+           var Pr = parseFloat($("input#celda"+((j*14)+12)).val()) * parseFloat($("input#celda"+((j*14))).val());
+                $("input#celda"+((j*14)+13)).val(Pr.toFixed(2));
+
+                if(j >= 1){
+                  var nr = parseFloat($("input#celda"+((j*14)+5)).val()) - parseFloat($("input#celda"+(((j-1)*14)+5)).val());
+                  var dr = parseFloat($("input#celda"+((j*14)+1)).val()) - parseFloat($("input#celda"+(((j-1)*14)+1)).val());
+                  var PM = nr/dr;
+                  $("input#celda"+((j*14)+7)).val(PM.toFixed(2));
+
+                  nr = parseFloat($("input#celda"+((j*14)+4)).val()) - parseFloat($("input#celda"+(((j-1)*14)+4)).val());
+                  dr = parseFloat($("input#celda"+((j*14))).val()) - parseFloat($("input#celda"+(((j-1)*14))).val());
+                  var CM = nr/dr;
+                  $("input#celda"+((j*14)+11)).val(CM.toFixed(2));
+
+                }
+
+
+         }  
+       });    
+  var chart = new Highcharts.Chart({
+
+
+       chart: {
+           renderTo: 'container1',
+          type: 'line',
+                marginRight: 130,
+                marginBottom: 25
+       },
+       title: {
+           text: 'Costos Totales y Ingreso Total'
+       },
+       xAxis: {
+           categories: []
+       },
+       yAxis: {
+             title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+       },
+       tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+       series: []
+    
+  });
+  var chart = new Highcharts.Chart({
+
+
+       chart: {
+           renderTo: 'container2',
+          type: 'line',
+                marginRight: 130,
+                marginBottom: 25
+       },
+       title: {
+           text: 'Costos Promedios'
+       },
+       xAxis: {
+           categories: []
+       },
+       yAxis: {
+             title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+       },
+       tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+       series: []
+    
+  });
+    var chart = new Highcharts.Chart({
+
+
+       chart: {
+           renderTo: 'container3',
+          type: 'line',
+                marginRight: 130,
+                marginBottom: 25
+       },
+       title: {
+           text: 'Producción Total y Promedio'
+       },
+       xAxis: {
+           categories: []
+       },
+       yAxis: {
+             title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+       },
+       tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+       series: []
+    
+  });
+var chart = new Highcharts.Chart({
+
+
+       chart: {
+           renderTo: 'container4',
+          type: 'line',
+                marginRight: 130,
+                marginBottom: 25
+       },
+       title: {
+           text: 'Producción Marginal'
+       },
+       xAxis: {
+           categories: []
+       },
+       yAxis: {
+             title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+       },
+       tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+       series: []
+    
+  });
+var chart = new Highcharts.Chart({
+
+
+       chart: {
+           renderTo: 'container5',
+          type: 'line',
+                marginRight: 130,
+                marginBottom: 25
+       },
+       title: {
+           text: 'Costo Marginal'
+       },
+       xAxis: {
+           categories: []
+       },
+       yAxis: {
+             title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+       },
+       tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+       series: []
+    
+  });
+//});
+
+  $("#add2").click(function() {
+        var options = {
+
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        remove: function() {
+                            if (!confirm('Do you really want to remove the first point?')) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        chart: {
+            renderTo: 'container1',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+
+        title: {
+            text: 'Costos Totales y Ingreso Total'
+        },
+        xAxis: [],
+        yAxis: {
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+
+        var options1 = {
+        chart: {
+            renderTo: 'container2',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+        title: {
+            text: 'Costos Promedios'
+        },
+        xAxis: [],
+        yAxis: {
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+        var options2 = {
+        chart: {
+            renderTo: 'container3',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+        title: {
+            text: 'Producción Total y Promedio'
+        },
+        xAxis: [],
+        yAxis: {
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+        var options3 = {
+        chart: {
+            renderTo: 'container4',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+        title: {
+            text: 'Producción Marginal'
+        },
+        xAxis: [],
+        yAxis: {
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+var options4 = {
+        chart: {
+            renderTo: 'container5',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+        title: {
+            text: 'Costo Marginal'
+        },
+        xAxis: [],
+        yAxis: {
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+      var xAxis ={
+        categories: []
+        
+      }  
+      var L ={
+        categories: []
+        
+      } 
+
+        var filas = $('tbody:last tr', $("#mitabla")).length;
+        var col = $('tr:last td', $("#mitabla")).length;
+         for(var j=0;j<filas-1;j++){
+           var valor1=$("input#celda"+(j*14)).val();
+           xAxis.categories.push(parseFloat(valor1));
+         }
+
+      var serie1 = {        
+       
+        name: 'CFT',
+        data: []
+      };
+      var serie2 = {        
+       
+        name: 'CVT',
+        data: []
+      };
+      var serie3 = {        
+       
+        name: 'CT',
+        data: []
+      };
+//-----------------------------------------------------------------
+      var serie11 = {        
+       
+        name: 'CFP',
+        data: []
+      };
+      var serie21 = {        
+       
+        name: 'CVP',
+        data: []
+      };
+      var serie31 = {        
+       
+        name: 'CP',
+        data: []
+      };
+      var serieIT = {
+
+        name: "IT",
+        data: []
+      }
+      var seriePT = {
+
+        name: "PT",
+        data: []
+      }
+      var seriePP = {
+
+        name: "PP",
+        data: []
+      }
+      var seriePM = {
+
+        name: "PM",
+        data: []
+      }
+      var serieCM = {
+
+        name: "CM",
+        data: []
+      }
+        for(var i=0; i<filas-1;i++){
+          for(var j=0; j<col; j++){
+              if(j == 1){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                L.categories.push(parseFloat(valor1));
+              }
+              if(j == 2){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serie1.data.push(parseFloat(valor1));
+              }
+              if(j == 3){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serie2.data.push(parseFloat(valor1));
+              }
+              if(j == 4){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serie3.data.push(parseFloat(valor1));
+              }
+              if(j == 5){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                seriePT.data.push(parseFloat(valor1));                
+              }
+              if(j == 6){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                seriePP.data.push(parseFloat(valor1));                
+              }
+              if(j == 7){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                seriePM.data.push(parseFloat(valor1));
+                window.console.log(valor1);                
+              }
+              if(j == 8){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serie11.data.push(parseFloat(valor1));
+              }
+              if(j == 9){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serie21.data.push(parseFloat(valor1));
+              }
+              if(j == 10){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serie31.data.push(parseFloat(valor1));
+              }
+              if(j == 11){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();             
+                serieCM.data.push(parseFloat(valor1));           
+              }
+              if(j == 13){
+                var pos = (i*14)+j;
+                var valor1=$("input#celda"+pos).val();
+                serieIT.data.push(parseFloat(valor1));
+              }
+          }
+        }
+
+    options.xAxis.push(xAxis);
+    options.series.push(serie1);
+    options.series.push(serie2);
+    options.series.push(serie3);
+    options.series.push(serieIT);
+
+
+    options1.xAxis.push(xAxis);
+    options1.series.push(serie11);
+    options1.series.push(serie21);
+    options1.series.push(serie31);
+                if($("input#celda"+0).val() == 0)
+                {
+                   options1.series[0].data.splice(0,1);
+                   options1.series[1].data.splice(0,1);
+                   options1.series[2].data.splice(0,1);
+                   options1.xAxis[0].categories.splice(0,1);
+                }
+    options2.xAxis.push(L);
+    options2.series.push(seriePT);
+    options2.series.push(seriePP);
+                if($("input#celda"+1).val() == 0)
+                {
+                   options2.series[0].data.splice(0,1);
+                   options2.series[1].data.splice(0,1);
+                   options2.xAxis[0].categories.splice(0,1);
+                }
+
+    options3.xAxis.push(L);
+    options3.series.push(seriePM);
+
+                 options3.series[0].data.splice(0,1);
+                 options3.xAxis[0].categories.splice(0,1);
+                 if($("input#celda"+(14+7)).val() == "" || $("input#celda"+(14+7)).val() == "NaN")
+                 {
+                    options3.series[0].data.splice(0,1);
+                    options3.xAxis[0].categories.splice(0,1);
+
+                 }
+
+    options4.xAxis.push(xAxis);
+    options4.series.push(serieCM);
+                 options4.series[0].data.splice(0,1);
+                 options4.xAxis[0].categories.splice(0,1);
+                 if($("input#celda"+(14+11)).val() == "" || $("input#celda"+(14+11)).val() == "NaN" )
+                 {
+                    options4.series[0].data.splice(0,1);
+                    options4.xAxis[0].categories.splice(0,1);
+
+                 }
+
+
+
+    var chart = new Highcharts.Chart(options);
+    var chart = new Highcharts.Chart(options1);
+    var chart = new Highcharts.Chart(options2);
+    var chart = new Highcharts.Chart(options3);
+    var chart = new Highcharts.Chart(options4);
+
+
+});
+
+});
+
+
+        </script>
+
+
+<body>
+  <div class="row">
+    <nav> 
+      <div><h5>Ingreso, Producción y Costos</h5></div>
+    </nav>  
+  </div>
+  <br>
+<div class="row">
+<div id="Entrdas" class="small-2 large-12 columns"><center>
+    Q = <input id="Q" class="input-medium" type="text">
+    L = <input id="L" class="input-medium" type="text">
+    CFT = <input id="Costof" class="input-medium" type="text">
+    CVT = <input id="Costov"class="input-medium" type="text">
+    PR = <input id = "precio" class="input-medium" type="text"></center>
+</div>
+</div>
+<div class="row">
+  <br>
+<div class="large-12 columns"> 
+  <center><button id="add" class="btn btn-primary">Añadir Fila</button>
+  </center>
+  <br>
+ <div class = "container-fluid">
+  <div id="tableta">  
+    <center>
+      <table border="1" id="mitabla" class="table table-bordered">
+       <tr>
+        <td>Q</td>
+        <td>L</td>
+        <td>CFT (s/.)</td>
+        <td>CVT (s/.)</td>
+        <td>CT (s/.)</td>
+        <td>PT (s/.)</td>
+        <td>PP (s/.)</td>
+        <td>PM (s/.)</td>
+        <td>CFP (s/.)</td>
+        <td>CVP (s/.)</td>
+        <td>CP (s/.)</td>
+        <td>CM (s/.)</td>
+        <td>PR (s/.)</td>
+        <td>IT (s/.)</td>
+       </tr>
+
+      </table>  
+    </center>
+  </div>
+  </div>
+</div>    
+</div> 
+    <center>
+      <button id="LlenarT" class="btn btn-inverse" >Llenar Tabla</button>			
+      <button id="add2" class="btn btn-inverse" >calcular</button>
+    </center>
+  </div>
+  <br>
+
+<div class="row">
+  <div class = "container-fluid">
+      <div class="large-6 columns"><div id="container1"></div></div>
+      <div class="large-6 columns"><div id="container2"></div></div>
+  </div>
+  <br>
+  <div class = "container-fluid">
+      <div class="large-6 columns"><div id="container3"></div></div>
+      <div class="large-6 columns"><div id="container4"></div></div>
+  </div>
+  <br>
+  <div class = "container-fluid-aux">
+      <div class="large-8 columns"><div id="container5"></div></div>
+  </div>
+
+
+</div>
+
+<footer>
+<center> 
+<b> &copy copyright Monis Development </b> Fabio Gutierrez Romero <b>&</b>  Daniel Cam Urquizo  <b>&</b> Lizbeth Barreto Valderrama <b>&</b> Jose Quintanilla Paredes 
+</center> 
+</footer>
+
+</body>
+</html>
+
+
+

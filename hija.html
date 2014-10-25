@@ -1,0 +1,160 @@
+<html>
+<head>
+	<title></title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="js/highcharts.js"></script>
+        <!-- Este archivo es para darle un estilo (Este archivo es Opcional) -->
+        <script type="text/javascript" src="js/themes/grid.js"></script>
+        <!-- Este archivo es para poder exportar los datos que obtengamos -->
+        <script type="text/javascript" src="js/modules/exporting.js"></script>
+    <script src="js/prefixfree.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var datos = window.dialogArguments;
+			
+
+
+			var p11=parseInt(datos[0]);			
+			var p12=parseInt(datos[2]);
+			var p21=parseInt(datos[3]);			
+			var p22=parseInt(datos[5]);
+
+			var punto1Y=p11/p12;
+			
+			if(datos[4]=='-')
+			var punto2Y=parseInt(datos[3])-1*parseInt(datos)*100;
+			else punto2X=parseInt(datos[3])+parseInt(datos)*150;
+
+			var options = {
+
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        remove: function() {
+                            if (!confirm('Do you really want to remove the first point?')) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        chart: {
+            renderTo: 'container1',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+
+        title: {
+            text: 'Costos Totales y Ingreso Total'
+        },
+        xAxis: [],
+        yAxis: {
+        	min: 0, max: 130,
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ' Soles'
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+      var options1 = {
+        chart: {
+            renderTo: 'container2',
+            type: 'spline',
+                marginRight: 130,
+                marginBottom: 25
+        },
+        title: {
+            text: 'Costos Promedios'
+        },
+        xAxis: [],
+        yAxis: {
+            title: {
+                    text: ''
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#808080'
+                }]
+        },
+        tooltip: {
+                valueSuffix: ''
+            },
+        legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -10,
+                y: 100,
+                borderWidth: 0
+        },
+        series: []
+      }
+       var xAxis ={
+        categories: []
+        
+      }  
+      var L ={
+        categories: []
+        
+      } 
+     var serie1 = {        
+       
+        name: 'Qd',
+        data: []
+      };
+       var serie2 = {        
+       
+        name: 'Qo',
+        data: []
+      };
+
+      serie1.data.push(punto1Y);
+      serie1.data.push(0);
+      serie2.data.push(0);
+      serie2.data.push(150);
+      xAxis.categories.push(0);
+      xAxis.categories.push(datos[0]);
+      xAxis.categories.push(datos[3]);
+      xAxis.categories.push(punto2X);
+
+      options.xAxis.push(xAxis);
+    options.series.push(serie1);
+
+    options.series.push(serie2);
+    var chart = new Highcharts.Chart(options);
+
+
+
+		});
+
+
+	</script>
+</head>
+<body>
+<div>
+
+	<div id="container1"></div>
+
+</div>
+</body>
+</html>
